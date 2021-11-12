@@ -8,6 +8,7 @@ from fastapi.responses import RedirectResponse
 
 from routes.v1 import v1_router
 from utils import generate_oauth_link
+
 load_dotenv()
 
 cors_origins = json.loads(os.getenv("origins", '["*"]'))
@@ -26,9 +27,11 @@ app = FastAPI(**app_config)
 # async def route_root():
 #     return RedirectResponse(url="/docs/swagger")
 
+
 @app.get("/", include_in_schema=False)
 async def route_root():
     return RedirectResponse(url=generate_oauth_link())
+
 
 app.add_middleware(
     CORSMiddleware,
