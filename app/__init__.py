@@ -7,13 +7,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 
 from routes.v1 import v1_router
-
+from utils import generate_oauth_link
 load_dotenv()
 
 cors_origins = json.loads(os.getenv("origins", '["*"]'))
 app_config = {
-    "title": "FastAPI Template",
-    "description": "FastAPI Template [GitHub](https://github.com/331leo/FastAPI_Template)",
+    "title": "HyundaiLogin",
+    "description": "Hyundai High School Login service based on Google oAuth2 [GitHub](https://github.com/331leo/HyundaiLogin)",
     "version": "0.0.1",
     "redoc_url": "/docs/redoc",
     "docs_url": "/docs/swagger",
@@ -22,10 +22,13 @@ app_config = {
 app = FastAPI(**app_config)
 
 
+# @app.get("/", include_in_schema=False)
+# async def route_root():
+#     return RedirectResponse(url="/docs/swagger")
+
 @app.get("/", include_in_schema=False)
 async def route_root():
-    return RedirectResponse(url="/docs/swagger")
-
+    return RedirectResponse(url=generate_oauth_link())
 
 app.add_middleware(
     CORSMiddleware,
