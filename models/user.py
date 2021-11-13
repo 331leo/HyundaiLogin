@@ -37,5 +37,4 @@ def parse_google_response(data: dict) -> dict:
     user["grade"] = int(user["student_id"][0]) if user["is_student"] else 0
     user["classnum"] = int(user["student_id"][1:3]) if user["is_student"] else 0
     user["number"] = int(user["student_id"][3:5]) if user["is_student"] else 0
-    print(user)
     return user
