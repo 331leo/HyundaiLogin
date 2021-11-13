@@ -2,7 +2,7 @@ import json
 import os
 
 from dotenv import load_dotenv
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 
@@ -26,11 +26,6 @@ app = FastAPI(**app_config)
 # @app.get("/", include_in_schema=False)
 # async def route_root():
 #     return RedirectResponse(url="/docs/swagger")
-
-
-@app.get("/", include_in_schema=False)
-async def route_root():
-    return RedirectResponse(url=generate_oauth_link())
 
 
 app.add_middleware(
