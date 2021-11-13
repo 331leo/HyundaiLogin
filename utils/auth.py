@@ -5,6 +5,7 @@ from jwt.exceptions import InvalidTokenError, InvalidSignatureError
 from models.jwt import oAuthCode, JTWType, AccessToken
 from datetime import datetime, time
 from utils.etc import md5hash
+from utils.db import oauth_code_db
 
 # jwt.encode({"user_id": 1}, getenv("JWT_SECRET"), algorithm="HS256")
 # jwt.decode("TOKEN", getenv("JWT_SECRET"), algorithms="HS256")
@@ -13,7 +14,7 @@ from utils.etc import md5hash
 
 def gen_oauth_code(user_id: str):
     timestamp = int(datetime.now().timestamp())
-    return {"code": jwt.encode(
+    code = jwt.encode(
         oAuthCode.parse_obj(
             {
                 "type": JTWType.OAUTH_CODE,
@@ -23,7 +24,9 @@ def gen_oauth_code(user_id: str):
         ).dict(),
         getenv("JWT_SECRET"),
         algorithm="HS256",
-    ), "ts": timestamp}
+    )
+    oauth_code_db.set(code, user_id)
+    return {"code": code, "ts": timestamp}
 
 def gen_access_token(user_id: str):
     timestamp = int(datetime.now().timestamp())
@@ -45,8 +48,9 @@ def verify_oauth_code(code: str) -> Union[str, bool]:
         return (
             payload.get("id")
             if (
-                payload.get("type") == JTWType.OAUTH_CODE
-                and int(payload.get("ts")) + 300 > int(datetime.now().timestamp())
+                payload.get("type") == JTWType.OAUTH_CODE and
+                int(payload.get("ts")) + 300 > int(datetime.now().timestamp()) and
+                oauth_code_db.delete(code) == 1
             )
             else False
         )

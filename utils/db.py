@@ -1,7 +1,7 @@
 from redis import Redis
 from os import getenv
-from models.db import RedisData
 
-user_db = Redis(host=getenv("REDIS_HOST"), port=getenv("REDIS_PORT"), db=RedisData.USER)
-oauth_code_db = Redis(host=getenv("REDIS_HOST"), port=getenv("REDIS_PORT"), db=RedisData.OAUTHCODE)
-token_db = Redis(host=getenv("REDIS_HOST"), port=getenv("REDIS_PORT"), db=RedisData.TOKENS)
+user_db = Redis(host=getenv("REDIS_HOST"), port=getenv("REDIS_PORT"), db=0)
+oauth_code_db = Redis(host=getenv("REDIS_HOST"), port=getenv("REDIS_PORT"), db=1)
+token_db = Redis(host=getenv("REDIS_HOST"), port=getenv("REDIS_PORT"), db=2)
+
