@@ -1,6 +1,7 @@
-from pydantic import BaseModel
 from datetime import datetime
 from enum import Enum
+
+from pydantic import BaseModel
 
 
 class JTWType(int, Enum):
@@ -24,6 +25,3 @@ class TokenResponse(BaseModel):
     generated_in: int
     expires_in: int
     token_type: JTWType
-
-class TokenRequest(BaseModel):
-    code: str
