@@ -1,11 +1,14 @@
-from typing import Union
-import jwt
-from os import getenv
-from jwt.exceptions import InvalidTokenError, InvalidSignatureError
-from models.jwt import oAuthCode, JTWType, AccessToken
 from datetime import datetime, time
-from utils.etc import md5hash
+from os import getenv
+from typing import Union
+
+import jwt
+from fastapi import Depends, FastAPI, HTTPException, Request
+from jwt.exceptions import InvalidSignatureError, InvalidTokenError
+
+from models.jwt import AccessToken, JTWType, oAuthCode
 from utils.db import oauth_code_db
+from utils.etc import md5hash
 
 # jwt.encode({"user_id": 1}, getenv("JWT_SECRET"), algorithm="HS256")
 # jwt.decode("TOKEN", getenv("JWT_SECRET"), algorithms="HS256")
@@ -58,7 +61,8 @@ def verify_oauth_code(code: str) -> Union[str, bool]:
     except (InvalidTokenError, InvalidSignatureError) as e:
         return False
 
-def verify_access_token(token: str) -> Union[str, bool]:
+def verify_access_token(token: str):
+    token = token.replace("Bearer ", "")
     try:
         payload = jwt.decode(token, getenv("JWT_SECRET"), algorithms="HS256")
         return (

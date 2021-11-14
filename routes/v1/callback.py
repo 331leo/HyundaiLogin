@@ -1,19 +1,21 @@
+import json as jsonlib
+from os import getenv
 from typing import Optional
+
 from fastapi import APIRouter
 from fastapi.params import Cookie
 from starlette.responses import JSONResponse, RedirectResponse
+
 from models.user import User, parse_google_response
-from utils.google import get_token, get_user_info
 from utils.auth import gen_oauth_code
-from os import getenv
 from utils.db import user_db
 from utils.etc import md5hash
-import json as jsonlib
+from utils.google import get_token, get_user_info
 
 callback_router = APIRouter()
 
 
-@callback_router.get("/google")
+@callback_router.get("/google", response_class=RedirectResponse)
 async def callback_google(code: str, hyundai_id_callback: Optional[str] = Cookie(None)):
     # print(hyundai_id_callback)
     try:
