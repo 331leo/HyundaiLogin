@@ -1,5 +1,7 @@
 import uvicorn
 
 from . import app
-
-uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
+from dotenv import load_dotenv
+load_dotenv()
+from os import getenv
+uvicorn.run("app:app", host=getenv("HOST"), port=getenv("PORT"), reload=True)
