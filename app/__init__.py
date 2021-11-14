@@ -2,12 +2,10 @@ import json
 import os
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, Response
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import RedirectResponse
 
 from routes.v1 import v1_router
-from utils import generate_oauth_link
 
 load_dotenv()
 

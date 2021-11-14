@@ -1,7 +1,4 @@
-import asyncio
 from os import getenv
-
-import aiohttp
 
 from utils.etc import REQ_TYPE, request
 

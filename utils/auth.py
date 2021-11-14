@@ -1,9 +1,8 @@
-from datetime import datetime, time
+from datetime import datetime
 from os import getenv
 from typing import Union
 
 import jwt
-from fastapi import Depends, FastAPI, HTTPException, Request
 from jwt.exceptions import InvalidSignatureError, InvalidTokenError
 
 from models.jwt import AccessToken, JTWType, oAuthCode
@@ -31,19 +30,24 @@ def gen_oauth_code(user_id: str):
     oauth_code_db.set(code, user_id)
     return {"code": code, "ts": timestamp}
 
+
 def gen_access_token(user_id: str):
     timestamp = int(datetime.now().timestamp())
-    return {"token": jwt.encode(
-        AccessToken.parse_obj(
-            {
-                "type": JTWType.ACCESS_TOKEN,
-                "ts": timestamp,
-                "hash": md5hash(user_id),
-            }
-        ).dict(),
-        getenv("JWT_SECRET"),
-        algorithm="HS256",
-    ),"ts": timestamp}
+    return {
+        "token": jwt.encode(
+            AccessToken.parse_obj(
+                {
+                    "type": JTWType.ACCESS_TOKEN,
+                    "ts": timestamp,
+                    "hash": md5hash(user_id),
+                }
+            ).dict(),
+            getenv("JWT_SECRET"),
+            algorithm="HS256",
+        ),
+        "ts": timestamp,
+    }
+
 
 def verify_oauth_code(code: str) -> Union[str, bool]:
     try:
@@ -51,15 +55,16 @@ def verify_oauth_code(code: str) -> Union[str, bool]:
         return (
             payload.get("id")
             if (
-                payload.get("type") == JTWType.OAUTH_CODE and
-                int(payload.get("ts")) + 300 > int(datetime.now().timestamp()) and
-                oauth_code_db.delete(code) == 1
+                payload.get("type") == JTWType.OAUTH_CODE
+                and int(payload.get("ts")) + 300 > int(datetime.now().timestamp())
+                and oauth_code_db.delete(code) == 1
             )
             else False
         )
 
     except (InvalidTokenError, InvalidSignatureError) as e:
         return False
+
 
 def verify_access_token(token: str):
     token = token.replace("Bearer ", "")

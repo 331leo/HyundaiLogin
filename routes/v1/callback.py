@@ -33,5 +33,7 @@ async def callback_google(code: str, hyundai_id_callback: Optional[str] = Cookie
             },
             status_code=500,
         )
-    user_db.set(md5hash(user.id), jsonlib.dumps(user.dict(),ensure_ascii=False))
-    return RedirectResponse(hyundai_id_callback + f"?code={gen_oauth_code(user.id).get('code')}")
+    user_db.set(md5hash(user.id), jsonlib.dumps(user.dict(), ensure_ascii=False))
+    return RedirectResponse(
+        hyundai_id_callback + f"?code={gen_oauth_code(user.id).get('code')}"
+    )

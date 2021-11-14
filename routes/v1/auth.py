@@ -1,13 +1,11 @@
 from fastapi import APIRouter, HTTPException, Security
-from fastapi.param_functions import Depends
 from fastapi.params import Form
 from fastapi.responses import RedirectResponse
 from fastapi.security.http import HTTPAuthorizationCredentials, HTTPBasic
-from starlette.responses import JSONResponse
 
 from models.jwt import JTWType, TokenResponse
 from utils import generate_oauth_link
-from utils.auth import gen_access_token, gen_oauth_code, verify_oauth_code
+from utils.auth import gen_access_token, verify_oauth_code
 from utils.db import client_credentials_db
 
 auth_router = APIRouter()
@@ -21,17 +19,21 @@ async def route_login(redirect_uri: str):
 
 
 @auth_router.post("/oauth2/token", response_model=TokenResponse)
-async def get_access_token(code: str = Form(...), credentials: HTTPAuthorizationCredentials = Security(HTTPBasic())):
+async def get_access_token(
+    code: str = Form(...),
+    credentials: HTTPAuthorizationCredentials = Security(HTTPBasic()),
+):
     if client_credentials_db.get(credentials.username) == credentials.password.encode():
         id = verify_oauth_code(code)
         if id:
             data = gen_access_token(id)
-            return TokenResponse.parse_obj({"access_token": data.get("token"), "token_type": JTWType.ACCESS_TOKEN, "expires_in": 36000, "generated_in": data.get("ts")})
-        raise HTTPException(
-                    status_code=401,
-                    detail="Unauthorized (oAuthCode)"
-                )
-    raise HTTPException(
-                    status_code=401,
-                    detail="Unauthorized (Client Secret)"
-                )
+            return TokenResponse.parse_obj(
+                {
+                    "access_token": data.get("token"),
+                    "token_type": JTWType.ACCESS_TOKEN,
+                    "expires_in": 36000,
+                    "generated_in": data.get("ts"),
+                }
+            )
+        raise HTTPException(status_code=401, detail="Unauthorized (oAuthCode)")
+    raise HTTPException(status_code=401, detail="Unauthorized (Client Secret)")

@@ -1,4 +1,3 @@
-from datetime import datetime
 from enum import Enum
 
 from pydantic import BaseModel
@@ -19,6 +18,7 @@ class AccessToken(BaseModel):
     type: JTWType
     ts: int
     hash: str
+
 
 class TokenResponse(BaseModel):
     access_token: str
