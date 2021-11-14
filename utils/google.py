@@ -1,17 +1,9 @@
-import asyncio, aiohttp
+import asyncio
 from os import getenv
-from enum import Enum
 
+import aiohttp
 
-class REQ_TYPE(str, Enum):
-    GET = "GET"
-    POST = "POST"
-
-
-async def request(type: REQ_TYPE, **kwargs) -> dict:
-    async with aiohttp.ClientSession() as session:
-        async with session.request(type, **kwargs) as resp:
-            return await resp.json()
+from utils.etc import REQ_TYPE, request
 
 
 async def get_token(code: str) -> dict:
