@@ -31,7 +31,7 @@ async def get_access_token(
                 {
                     "access_token": data.get("token"),
                     "token_type": JTWType.ACCESS_TOKEN,
-                    "expires_in": 36000,
+                    "expires_in": 60*60*24*365,
                     "generated_in": data.get("ts"),
                 }
             )

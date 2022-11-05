@@ -1,0 +1,31 @@
+version: "3"
+
+services:
+  api:
+    build: .
+    environment:
+      - origins=[]
+      - HOST=0.0.0.0
+      - PORT=8000
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GOOGLE_REDIRECT_URI=${GOOGLE_REDIRECT_URI}
+      - GOOGLE_FIXED_HD=${GOOGLE_FIXED_HD}
+      - JWT_SECRET=${JWT_SECRET}
+      - TEST_CLIENT_ID=${TEST_CLIENT_ID}
+      - TEST_CLIENT_SECRET=${TEST_CLIENT_SECRET}
+      - CONTACT=${CONTACT}
+    ports:
+      - "80:8000"
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:alpine
+    volumes:
+      - redis_data:/data
+
+volumes:
+  redis_data:
