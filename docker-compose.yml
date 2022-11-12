@@ -18,7 +18,7 @@ services:
       - TEST_CLIENT_SECRET=${TEST_CLIENT_SECRET}
       - CONTACT=${CONTACT}
     ports:
-      - "80:8000"
+      - "${PORT}:8000"
     depends_on:
       - redis
 
